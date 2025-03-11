@@ -32,7 +32,16 @@ export class AuthService {
 
     return {
       success: true,
-      user: newUser
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+        address: newUser.address,
+        city: newUser.city,
+        country: newUser.country,
+        phone: newUser.phone
+      }
     }
   }
 
