@@ -2,7 +2,7 @@ version: '4.3'
 
 services:
   nestapp:
-    build: ./
+    build: lautaromateol/ecommerce-api:latest
     ports:
       - "3001:3000"
     env_file:
