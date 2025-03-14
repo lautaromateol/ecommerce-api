@@ -1,10 +1,24 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, ParseUUIDPipe, Put, Query, UseGuards } from "@nestjs/common"
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, ParseUUIDPipe, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common"
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth, ApiQuery } from "@nestjs/swagger"
 import { AuthGuard } from "../guards/auth.guard"
 import { Auth } from "../decorators/auth.decorator"
 import { Role } from "../auth/roles.enum"
 import { UsersService } from "./users.service"
 import { UpdateUserDto } from "./dtos/update-user-dto"
+
+interface JwtPayload {
+  sub: string;
+  id: string;
+  email: string;
+  name: string;
+  roles: Role[];
+  iat: number;
+  exp: number;
+}
+
+interface CustomRequest extends Request {
+  user?: JwtPayload
+}
 
 @ApiTags('users')
 @Controller("users")
@@ -36,7 +50,12 @@ export class UsersController {
   @ApiParam({ name: 'id', type: String, description: 'ID of the user' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  async getUser(@Param("id", new ParseUUIDPipe({ version: "4" })) id: string) {
+  async getUser(@Param("id", new ParseUUIDPipe({ version: "4" })) id: string, @Req() request: CustomRequest) {
+
+    if (request.user?.id !== id) {
+      throw new UnauthorizedException("You are not authorized to access this data.")
+    }
+
     const user = await this.usersService.getUser(id)
 
     if (!user) {
