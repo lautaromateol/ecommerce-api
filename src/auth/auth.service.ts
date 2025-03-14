@@ -62,6 +62,7 @@ export class AuthService {
       sub: dbUser.id,
       id: dbUser.id,
       email: dbUser.email,
+      name: dbUser.name,
       roles: [dbUser.isAdmin ? Role.ADMIN : Role.USER]
     }
 
