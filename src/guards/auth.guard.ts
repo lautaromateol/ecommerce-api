@@ -11,6 +11,7 @@ interface JwtPayload {
   sub: string;
   id: string;
   email: string;
+  name: string;
   roles: Role[];
   iat: number;
   exp: number;
@@ -40,12 +41,6 @@ async function validateHeader(request: Request, jwtService: JwtService): Promise
     payload.iat = new Date(payload.iat * 1000)
     payload.exp = new Date(payload.exp * 1000)
     request.user = payload
-
-    if (request.params.id) {
-      if (request.user?.id !== request.params.id) {
-        throw new Error()
-      }
-    }
 
     return true
   } catch {
