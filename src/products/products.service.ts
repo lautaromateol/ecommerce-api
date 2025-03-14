@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import slugify from "slugify";
 import { In, Repository } from "typeorm";
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -21,14 +22,14 @@ export class ProductsService {
 
   getProducts(): Promise<ProductResponseDto[]> {
     return this.productsRepository.find({
-      select: ["id", "name", "description", "price", "stock", "imgUrl", "categoryId"]
+      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
     })
   }
 
   getProduct(id: string): Promise<ProductResponseDto | null> {
     return this.productsRepository.findOne({
       where: { id },
-      select: ["id", "name", "description", "price", "stock", "categoryId"]
+      select: ["id", "name", "description", "slug", "price", "stock", "categoryId"]
     })
   }
 
@@ -102,12 +103,13 @@ export class ProductsService {
         dbProduct.description = product.description
         dbProduct.price = Number(product.price)
         dbProduct.stock = product.stock
+        dbProduct.slug = slugify(product.name)
         dbProduct.category = categories.find((category) => category.name === product.category)!
         return this.productsRepository.save(dbProduct)
       })
 
-      const products = (await Promise.all(productsPromises)).map(({ id, name, description, price, stock, imgUrl, categoryId }) => ({
-        id, name, description, price, stock, imgUrl, categoryId
+      const products = (await Promise.all(productsPromises)).map(({ id, name, description, slug, price, stock, imgUrl, categoryId }) => ({
+        id, name, description, slug, price, stock, imgUrl, categoryId
       }))
 
       return { products, success: true }

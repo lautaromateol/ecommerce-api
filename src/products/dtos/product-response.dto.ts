@@ -14,6 +14,11 @@ export class ProductResponseDto {
   })
   description: string;
 
+  @ApiProperty({
+    description: "Product slug", example: "smartphone-x"
+  })
+  slug: string;
+
   @ApiProperty({ description: "Product price", example: 599.99 })
   price: number;
 

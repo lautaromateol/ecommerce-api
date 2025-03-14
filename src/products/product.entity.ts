@@ -13,6 +13,9 @@ export class ProductEntity {
 
   @Column({ type: "varchar", length: 255 })
   description: string;
+  
+  @Column({ length: 50 })
+  slug: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
   price: number
