@@ -1,17 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsUUID } from "class-validator";
+import { ProductResponseDto } from "../../products/dtos/product-response.dto";
+import { SaveCategoryResponseDto } from "./save-category-response.dto";
 
-export class CategoryResponseDto {
-  @ApiProperty({
-    description: "Category ID"
-  })
-  @IsUUID("4")
-  id: string;
-
-  @ApiProperty({
-    description: "Category name.",
-    example: "Smartphones",
-  })
-  name: string;
-  
+export class CategoryResponseDto extends SaveCategoryResponseDto {
+  products: ProductResponseDto[]
 }

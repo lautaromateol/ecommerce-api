@@ -5,7 +5,7 @@ import { CategoryEntity } from "./category.entity";
 import { CreateCategoryDto } from "./dtos/create-category.dto";
 import { CategoryResponseDto } from "./dtos/category-response.dto";
 import { UpdateCategoryResponse } from "./dtos/update-category-response.dto";
-import { CategoryByIdResponse } from "./dtos/category-by-id-response.dto";
+import { SaveCategoryResponseDto } from "./dtos/save-category-response.dto";
 
 @Injectable()
 export class CategoriesService {
@@ -18,17 +18,15 @@ export class CategoriesService {
     return this.categoriesRepository.save(categories)
   }
 
-  getCategory(id: string): Promise<CategoryByIdResponse | null> {
+  getCategory(id: string): Promise<CategoryResponseDto | null> {
     return this.categoriesRepository.findOne({ where: { id }, relations: ["products"] })
   }
 
   getCategories(): Promise<CategoryResponseDto[]> {
-    return this.categoriesRepository.find({
-      select: ["id", "name"]
-    })
+    return this.categoriesRepository.find({ relations: ["products"] })
   }
 
-  saveCategory(category: CreateCategoryDto): Promise<CategoryResponseDto> {
+  saveCategory(category: CreateCategoryDto): Promise<SaveCategoryResponseDto> {
     return this.categoriesRepository.save(category)
   }
 
