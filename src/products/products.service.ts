@@ -29,7 +29,14 @@ export class ProductsService {
   getProduct(id: string): Promise<ProductResponseDto | null> {
     return this.productsRepository.findOne({
       where: { id },
-      select: ["id", "name", "description", "slug", "price", "stock", "categoryId"]
+      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
+    })
+  }
+
+  getProductBySlug(slug: string): Promise<ProductResponseDto | null> {
+    return this.productsRepository.findOne({
+      where: { slug },
+      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
     })
   }
 
@@ -104,6 +111,7 @@ export class ProductsService {
         dbProduct.price = Number(product.price)
         dbProduct.stock = product.stock
         dbProduct.slug = slugify(product.name)
+        dbProduct.imgUrl = "https://res.cloudinary.com/dubuaqpfm/image/upload/v1741975033/iPhone_15_appvq0.webp"
         dbProduct.category = categories.find((category) => category.name === product.category)!
         return this.productsRepository.save(dbProduct)
       })
