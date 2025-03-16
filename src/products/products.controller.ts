@@ -33,6 +33,20 @@ export class ProductsController {
     return product
   }
 
+  @Get("/slug/:slug")
+  @ApiOperation({ summary: 'Get a product by slug' })
+  @ApiParam({ name: 'slug', type: String, description: 'Slug of the product' })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
+  async getProductBySlug(@Param("slug") slug: string) {
+    const product = await this.productsService.getProductBySlug(slug)
+
+    if (!product) {
+      throw new NotFoundException("Product not found.")
+    }
+
+    return product
+  }
+
   @Post()
   @ApiBearerAuth()
   @Auth(Role.ADMIN)
