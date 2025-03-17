@@ -1,16 +1,63 @@
 import { v4 as uuid } from "uuid"
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
-import { OrderDetailsEntity } from "../order-details/order-details.entity"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { UserEntity } from "../users/user.entity"
+
+@Entity({ name: "Cart Item" })
+class CartItemEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @Column()
+  title: string;
+
+  @Column()
+  slug: string;
+
+  @Column()
+  price: number;
+
+  @Column()
+  image: string;
+
+  @Column()
+  quantity: number;
+
+  @ManyToOne(() => OrderEntity, order => order.cartItems)
+  @JoinColumn({ name: "orderId" })
+  order: OrderEntity
+
+  @Column()
+  orderId: string;
+}
 
 @Entity({ name: "Order" })
 export class OrderEntity {
-  [x: string]: any
   @PrimaryGeneratedColumn("uuid")
   id: string = uuid()
 
-  @Column({ type: "date", default: () => "CURRENT_DATE" })
-  date: Date
+  @Column()
+  chargeId: string;
+
+  @Column()
+  payment_intent: string;
+
+  @Column()
+  receipt_url: string;
+
+  @Column()
+  refunded: boolean;
+
+  @Column()
+  status: string;
+
+  @Column()
+  amount_captured: number;
+
+  @Column()
+  currency: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
   @JoinColumn({ name: "userId" })
@@ -19,10 +66,6 @@ export class OrderEntity {
   @Column({ nullable: true })
   userId: string;
 
-  @OneToOne(() => OrderDetailsEntity, (orderDetails) => orderDetails.order)
-  @JoinColumn({ name: "orderDetailsId" })
-  orderDetails: OrderDetailsEntity
-
-  @Column({ nullable: true })
-  orderDetailsId: string;
+  @OneToMany(() => CartItemEntity, cartItem => cartItem.order)
+  cartItems: CartItemEntity[];
 }
