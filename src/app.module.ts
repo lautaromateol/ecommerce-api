@@ -12,6 +12,7 @@ import { OrderModule } from './orders/order.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import typeOrmConfig from "./config/typeorm";
 import { CloudinaryModule } from './cloudinary/clodinary.module';
+import { StripeModule } from './stripe/stripe.module';
 
 
 @Module({
@@ -41,7 +42,8 @@ import { CloudinaryModule } from './cloudinary/clodinary.module';
         expiresIn: "1h"
       },
       secret: process.env.JWT_SECRET
-    })
+    }),
+    StripeModule.forRootAsync()
   ],
   controllers: [],
 })
