@@ -2,14 +2,11 @@ import { EntityManager, Repository } from "typeorm";
 import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrderEntity } from "./order.entity";
-import { CreateOrderDto } from "./dtos/create-order.dto";
 import { ProductsService } from "../products/products.service";
 import { UserEntity } from "../users/user.entity";
 import { UsersService } from "../users/users.service";
 import { ProductEntity } from "../products/product.entity";
-import { OrderDetailsEntity } from "../order-details/order-details.entity";
-import { CreateOrderResponseDto } from "./dtos/create-order-response.dto";
-import { OrderResponseDto } from "./dtos/order-response.dto";
+import { CreateOrderDto } from "./dtos/create-order.dto";
 
 @Injectable()
 export class OrdersService {
@@ -21,14 +18,12 @@ export class OrdersService {
     private readonly entityManager: EntityManager
   ) { }
 
-  async addOrder(order: CreateOrderDto): Promise<CreateOrderResponseDto> {
-    const products = (await this.productsService.getProductsByIds(order.products)).filter((product) => product.stock > 0)
+  async addOrder(order: CreateOrderDto) {
+    const products = (await this.productsService.getProductsByIds(order.cartItems)).filter((product) => product.stock > 0)
 
     if (products.length === 0) {
-      throw new BadRequestException("This products are not available.")
+      throw new BadRequestException("These products are not available.")
     }
-
-    const totalPrice = this.productsService.getTotalPrice(products)
 
     const user = await this.usersService.getUser(order.userId)
 
@@ -43,28 +38,18 @@ export class OrdersService {
         }))
 
         const savedOrder = await transactionalEntityManager.save(OrderEntity, {
-          user,
+          ...order,
+          user
         });
 
-        const savedOrderDetails = await transactionalEntityManager.save(OrderDetailsEntity, {
-          price: totalPrice,
-          order: savedOrder,
-          products
-        })
-
-        return {
-          data: {
-            price: totalPrice,
-            orderDetailsId: savedOrderDetails.id,
-          },
-        }
+       return savedOrder
       })
     } catch {
       throw new InternalServerErrorException("There was an error processing the order. Try again later.")
     }
   }
 
-  getOrder(id: string): Promise<OrderResponseDto | null> {
+  getOrder(id: string) {
     return this.ordersRepository.findOneBy({ id })
   }
 
