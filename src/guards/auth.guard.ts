@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { Observable } from "rxjs";
-import { Role } from "src/auth/roles.enum";
+import { isAfter } from "date-fns";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { Role } from "../auth/roles.enum";
 
 interface JwtPayload {
   sub: string;
@@ -38,6 +39,11 @@ async function validateHeader(request: Request, jwtService: JwtService): Promise
 
   try {
     const payload = await jwtService.verifyAsync(token, { secret })
+
+    if (isAfter(new Date(payload.iat * 1000), new Date())) {
+      throw new Error()
+    }
+
     payload.iat = new Date(payload.iat * 1000)
     payload.exp = new Date(payload.exp * 1000)
     request.user = payload
