@@ -34,7 +34,7 @@ class CartItemDTO {
   quantity: number;
 }
 
-export class CreateOrderDto {
+export class AddOrderDto {
   @ApiProperty({ description: 'Charge ID from the payment gateway', example: 'ch_1A2b3C4d5E6f7G8h9I0j' })
   @IsString()
   @IsNotEmpty()
