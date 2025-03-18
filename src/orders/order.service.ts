@@ -6,7 +6,8 @@ import { ProductsService } from "../products/products.service";
 import { UserEntity } from "../users/user.entity";
 import { UsersService } from "../users/users.service";
 import { ProductEntity } from "../products/product.entity";
-import { CreateOrderDto } from "./dtos/create-order.dto";
+import { AddOrderDto } from "./dtos/add-order.dto";
+import { AddOrderResponseDto } from "./dtos/add-order-response.dto";
 
 @Injectable()
 export class OrdersService {
@@ -18,7 +19,7 @@ export class OrdersService {
     private readonly entityManager: EntityManager
   ) { }
 
-  async addOrder(order: CreateOrderDto) {
+  async addOrder(order: AddOrderDto): Promise<AddOrderResponseDto> {
     const products = (await this.productsService.getProductsByIds(order.cartItems)).filter((product) => product.stock > 0)
 
     if (products.length === 0) {
@@ -42,7 +43,7 @@ export class OrdersService {
           user
         });
 
-       return savedOrder
+        return { success: true, order: savedOrder }
       })
     } catch {
       throw new InternalServerErrorException("There was an error processing the order. Try again later.")
