@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, NotFoundException, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./order.service";
-import { CreateOrderDto } from "./dtos/create-order.dto";
+import { AddOrderDto } from "./dtos/add-order.dto";
 import { AuthGuard } from "src/guards/auth.guard";
 
 @ApiTags("orders")
@@ -32,12 +32,12 @@ export class OrdersController {
   @UseGuards(AuthGuard)
   @HttpCode(201)
   @ApiOperation({ summary: "Create a order" })
-  @ApiBody({ type: CreateOrderDto, description: "Data for creating a order" })
+  @ApiBody({ type: AddOrderDto, description: "Data for creating a order" })
   @ApiResponse({ status: 400, description: "This products are not available." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
   @ApiResponse({ status: 404, description: "User not found." })
   @ApiResponse({ status: 500, description: "There was an error processing the order. Try again later." })
-  async addOrder(@Body() orderDto: CreateOrderDto) {
+  async addOrder(@Body() orderDto: AddOrderDto) {
     const order = await this.ordersService.addOrder(orderDto)
 
     return order
