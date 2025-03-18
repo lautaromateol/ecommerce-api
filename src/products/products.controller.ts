@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } 
 import { Auth } from "../decorators/auth.decorator"
 import { Role } from "../auth/roles.enum"
 import { ProductsService } from "./products.service"
-import { CreateProductDto } from "./dtos/create-product.dto"
+import { SaveProductDto } from "./dtos/save-product.dto"
 import { UpdateProductDto } from "./dtos/update-product-dto"
 
 @ApiTags('products')
@@ -52,10 +52,10 @@ export class ProductsController {
   @Auth(Role.ADMIN)
   @HttpCode(201)
   @ApiOperation({ summary: 'Create a new product' })
-  @ApiBody({ type: CreateProductDto, description: 'Data for creating a product' })
+  @ApiBody({ type: SaveProductDto, description: 'Data for creating a product' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async saveProduct(@Body() product: CreateProductDto) {
+  async saveProduct(@Body() product: SaveProductDto) {
     const dbProduct = await this.productsService.saveProduct(product)
 
     return dbProduct

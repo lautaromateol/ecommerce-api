@@ -6,7 +6,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ProductEntity } from "./product.entity";
 import { productsSeed } from "./products.seed";
 import { CategoriesService } from "../categories/categories.service";
-import { CreateProductDto } from "./dtos/create-product.dto";
+import { SaveProductDto } from "./dtos/save-product.dto";
 import { ProductResponseDto } from "./dtos/product-response.dto";
 import { UpdateProductResponse } from "./dtos/update-response.dto";
 import { LoadProductsResponseDto } from "./dtos/load-products-response.dto";
@@ -40,7 +40,7 @@ export class ProductsService {
     })
   }
 
-  async saveProduct(product: CreateProductDto): Promise<ProductResponseDto> {
+  async saveProduct(product: SaveProductDto): Promise<ProductResponseDto> {
     const dbCategory = await this.categoriesService.getCategory(product.categoryId)
 
     if (!dbCategory) {
