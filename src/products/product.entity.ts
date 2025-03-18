@@ -1,7 +1,6 @@
 import { v4 as uuid } from "uuid"
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CategoryEntity } from "../categories/category.entity";
-import { OrderDetailsEntity } from "../order-details/order-details.entity";
 
 @Entity({ name: "Product" })
 export class ProductEntity {
@@ -32,7 +31,4 @@ export class ProductEntity {
 
   @Column({ nullable: true })
   categoryId: string;
-
-  @ManyToMany(() => OrderDetailsEntity, (orderDetails) => orderDetails.products)
-  orderDetails: OrderDetailsEntity[];
 }
