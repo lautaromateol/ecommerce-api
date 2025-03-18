@@ -1,34 +1,7 @@
 import { v4 as uuid } from "uuid"
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { UserEntity } from "../users/user.entity"
-
-@Entity({ name: "Cart Item" })
-class CartItemEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column()
-  title: string;
-
-  @Column()
-  slug: string;
-
-  @Column()
-  price: number;
-
-  @Column()
-  image: string;
-
-  @Column()
-  quantity: number;
-
-  @ManyToOne(() => OrderEntity, order => order.cartItems)
-  @JoinColumn({ name: "orderId" })
-  order: OrderEntity
-
-  @Column()
-  orderId: string;
-}
+import { CartItemEntity } from "./cart-item.entity";
 
 @Entity({ name: "Order" })
 export class OrderEntity {
