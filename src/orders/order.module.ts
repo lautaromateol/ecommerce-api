@@ -5,7 +5,7 @@ import { OrdersService } from "./order.service";
 import { OrderEntity } from "./order.entity";
 import { StripeModule } from "../stripe/stripe.module";
 import { ProductsModule } from "../products/products.module";
-import { UsersModule } from "../users/users.module";
+import { UsersModule } from "../users/users.module"
 
 
 @Module({
@@ -15,6 +15,7 @@ import { UsersModule } from "../users/users.module";
     ProductsModule,
     UsersModule,
   ],
+  exports: [OrdersService],
   providers: [OrdersService],
   controllers: [OrdersController]
 })
