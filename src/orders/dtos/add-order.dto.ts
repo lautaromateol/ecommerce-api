@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 class CartItemDTO {
   @ApiProperty({ description: 'ID of the cart item', example: 1 })
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   id: string;
 
