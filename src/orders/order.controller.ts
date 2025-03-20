@@ -33,7 +33,7 @@ export class OrdersController {
   @HttpCode(201)
   @ApiOperation({ summary: "Create a order" })
   @ApiBody({ type: AddOrderDto, description: "Data for creating a order" })
-  @ApiResponse({ status: 400, description: "This products are not available." })
+  @ApiResponse({ status: 400, description: "These products are not available." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
   @ApiResponse({ status: 404, description: "User not found." })
   @ApiResponse({ status: 500, description: "There was an error processing the order. Try again later." })
