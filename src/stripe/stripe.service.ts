@@ -75,7 +75,8 @@ export class StripeService {
 
       const metadata = {
         cartItems: JSON.stringify(cartItems),
-        userId: user.id
+        userId: user.id,
+        token: order.token
       };
 
 

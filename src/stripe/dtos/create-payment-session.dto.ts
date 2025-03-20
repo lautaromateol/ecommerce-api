@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsNumber, IsUUID, ValidateNested } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsString, IsUUID, ValidateNested } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class Products {
@@ -19,6 +19,12 @@ export class CreatePaymentSessionDto {
   @IsNotEmpty()
   @IsUUID("4")
   userId: string;
+
+  @ApiProperty({
+    description: "The Bearer Token of the user."
+  })
+  @IsString()
+  token: string;
 
   @ApiProperty({
     description: "An array of the products ID's of the current order."
