@@ -8,6 +8,7 @@ import { UsersService } from "../users/users.service";
 import { ProductEntity } from "../products/product.entity";
 import { AddOrderDto } from "./dtos/add-order.dto";
 import { AddOrderResponseDto } from "./dtos/add-order-response.dto";
+import { CartItemEntity } from "./cart-item.entity";
 
 @Injectable()
 export class OrdersService {
@@ -40,8 +41,17 @@ export class OrdersService {
 
         const savedOrder = await transactionalEntityManager.save(OrderEntity, {
           ...order,
-          user
+          user,
         });
+
+        const cartItemsPromise = order.cartItems.filter((item) => products.some((product) => product.id === item.id)).map(async(item) => 
+          await transactionalEntityManager.save(CartItemEntity, {
+            ...item,
+            orderId: savedOrder.id
+          })
+        )
+
+        await Promise.all(cartItemsPromise)
 
         return { success: true, order: savedOrder }
       })
