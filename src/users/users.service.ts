@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   getUser(id: string): Promise<UserResponseDto | null> {
-    return this.usersRepository.findOne({ where: { id }, relations: ["orders"] })
+    return this.usersRepository.findOne({ where: { id }, relations: ["orders", "orders.cartItems"] })
   }
 
   saveUser(user: Omit<CreateUserDto, "confirmPassword">) {
