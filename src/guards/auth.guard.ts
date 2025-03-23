@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { Request } from "express";
 import { Observable } from "rxjs";
-import { isAfter } from "date-fns";
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { isBefore } from "date-fns";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Role } from "../auth/roles.enum";
 
@@ -40,7 +40,7 @@ async function validateHeader(request: Request, jwtService: JwtService): Promise
   try {
     const payload = await jwtService.verifyAsync(token, { secret })
 
-    if (isAfter(new Date(payload.iat * 1000), new Date())) {
+    if (isBefore(new Date(payload.exp * 1000), new Date())) {
       throw new Error()
     }
 
@@ -50,7 +50,7 @@ async function validateHeader(request: Request, jwtService: JwtService): Promise
 
     return true
   } catch {
-    throw new ForbiddenException("You are not authorized to access to this information.")
+    throw new UnauthorizedException("You are not authorized to access to this information.")
   }
 }
 
