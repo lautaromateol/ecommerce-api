@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'; 
 import { IsUUID } from 'class-validator';
+import { OrderResponseDto } from '../../orders/dtos/order-response.dto';
 
 export class UserResponseDto {
   @ApiProperty({
@@ -53,4 +54,9 @@ export class UserResponseDto {
     example: false,
   })
   isAdmin: boolean;
+
+  @ApiProperty({
+    description: "User orders"
+  })
+  orders: OrderResponseDto[]
 }
