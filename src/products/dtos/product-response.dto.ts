@@ -1,8 +1,19 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsUUID } from "class-validator";
+import { IsString, IsUUID } from "class-validator";
+import { ReviewResponseDto } from "../../reviews/dtos/review-response.dto";
+
+class CategoryDto {
+  @ApiProperty({ description: "ID of the category to which the product belongs" })
+  @IsUUID("4")
+  id: string;
+
+  @ApiProperty({ description: "Name of the category to which the product belongs", example: "Smartphones" })
+  @IsString()
+  name: string;
+}
 
 export class ProductResponseDto {
-  @ApiProperty({ description: "Product ID"})
+  @ApiProperty({ description: "Product ID" })
   @IsUUID("4")
   id: string;
 
@@ -31,4 +42,10 @@ export class ProductResponseDto {
   @ApiProperty({ description: "ID of the category to which the product belongs" })
   @IsUUID("4")
   categoryId: string;
+
+  @ApiProperty({ description: "Product Category", example: CategoryDto })
+  category: CategoryDto
+
+  @ApiProperty({ description: "Product reviews", example: ReviewResponseDto })
+  reviews: ReviewResponseDto[]
 }
