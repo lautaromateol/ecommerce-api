@@ -13,6 +13,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import typeOrmConfig from "./config/typeorm";
 import { CloudinaryModule } from './cloudinary/clodinary.module';
 import { StripeModule } from './stripe/stripe.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { StripeModule } from './stripe/stripe.module';
     ProductsModule, 
     UsersModule, 
     OrderModule,
+    ReviewsModule,
     AuthModule,
     CloudinaryModule,
     JwtModule.register({
