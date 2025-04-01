@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid"
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, JoinTable } from "typeorm"
 import { OrderEntity } from "../orders/order.entity";
+import { ReviewEntity } from "../reviews/review.entitity";
 
 @Entity({ name: "User" })
 export class UserEntity {
@@ -34,4 +35,8 @@ export class UserEntity {
   @OneToMany(() => OrderEntity, (order) => order.user)
   @JoinTable()
   orders: OrderEntity[]
+
+  @OneToMany(() => ReviewEntity, (review) => review.user)
+  @JoinTable()
+  reviews: ReviewEntity[]
 }
