@@ -1,4 +1,4 @@
-import { Controller, HttpCode, NotFoundException, Param, Post, Get, ParseUUIDPipe, Put, Body, Delete } from "@nestjs/common"
+import { Controller, HttpCode, NotFoundException, Param, Post, Get, ParseUUIDPipe, Put, Body, Delete, Query, ParseIntPipe } from "@nestjs/common"
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from "@nestjs/swagger"
 import { Auth } from "../decorators/auth.decorator"
 import { Role } from "../auth/roles.enum"
@@ -13,10 +13,24 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all available products' })
-  async getProducts() {
-    const products = await this.productsService.getProducts()
+  async getProducts(@Query("category") categoryId?: string, @Query("page", new ParseIntPipe({ optional: true })) page?: number, @Query("limit", new ParseIntPipe({ optional: true })) limit?: number) {
+    const pageNumber = page || 1
+    const limitNumber = limit || 20
 
-    return products.filter((product) => product.stock > 0)
+    const products = await this.productsService.getProducts(pageNumber, limitNumber, categoryId === "all" ? "" : categoryId)
+
+    return products
+  }
+
+  @Get("best-rated")
+  @ApiOperation({ summary: "Get best rated products" })
+  async getBestRated(@Query("page", new ParseIntPipe({ optional: true })) page?: number, @Query("limit", new ParseIntPipe({ optional: true })) limit?: number) {
+    const pageNumber = page || 1
+    const limitNumber = limit || 4
+
+    const products = await this.productsService.getBestRated(pageNumber, limitNumber)
+
+    return products
   }
 
   @Get(":id")

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import slugify from "slugify";
-import { In, Repository } from "typeorm";
+import { In, MoreThan, Repository } from "typeorm";
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductEntity } from "./product.entity";
@@ -11,6 +11,7 @@ import { ProductResponseDto } from "./dtos/product-response.dto";
 import { UpdateProductResponse } from "./dtos/update-response.dto";
 import { LoadProductsResponseDto } from "./dtos/load-products-response.dto";
 import { UpdateProductDto } from "./dtos/update-product-dto";
+import { PaginatedProductsResponseDto } from "./dtos/paginated-products-response.dto";
 
 @Injectable()
 export class ProductsService {
@@ -20,23 +21,73 @@ export class ProductsService {
     private readonly categoriesService: CategoriesService
   ) { }
 
-  getProducts(): Promise<ProductResponseDto[]> {
-    return this.productsRepository.find({
-      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
-    })
+  async getProducts(page: number, limit: number, categoryId?: string): Promise<PaginatedProductsResponseDto> {
+    const skip = (page - 1) * limit;
+
+    const products = categoryId ?
+      await this.productsRepository.find({
+        skip,
+        take: limit,
+        where: { categoryId, stock: MoreThan(0) },
+        relations: ["category", "reviews"]
+      }) :
+      await this.productsRepository.find({
+        skip,
+        take: limit,
+        where: { stock: MoreThan(0) },
+        relations: ["category", "reviews"]
+      })
+
+    return {
+      products,
+      page,
+      limit
+    }
   }
+
+  async getBestRated(page: number, limit: number): Promise<PaginatedProductsResponseDto> {
+    const skip = (page - 1) * limit;
+    
+    const allProducts = await this.productsRepository.find({
+      relations: ['reviews']
+    });
+
+    const productsWithRatings = allProducts.map(product => {
+      const ratings = product.reviews.map(review => review.rating);
+      const averageRating = ratings.length > 0 
+        ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
+        : 0;
+      
+      return {
+        ...product,
+        averageRating: parseFloat(averageRating.toFixed(2)) 
+      };
+    });
+
+    const filteredProducts = productsWithRatings
+      .filter(product => product.averageRating > 0)
+      .sort((a, b) => b.averageRating - a.averageRating);
+
+    const paginatedProducts = filteredProducts.slice(skip, skip + limit);
+
+    return {
+      page,
+      limit,
+      products: paginatedProducts
+    };
+}
 
   getProduct(id: string): Promise<ProductResponseDto | null> {
     return this.productsRepository.findOne({
       where: { id },
-      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
+      relations: ["category", "reviews", "reviews.user"]
     })
   }
 
   getProductBySlug(slug: string): Promise<ProductResponseDto | null> {
     return this.productsRepository.findOne({
       where: { slug },
-      select: ["id", "name", "description", "slug", "price", "stock", "imgUrl", "categoryId"]
+      relations: ["category", "reviews", "reviews.user"]
     })
   }
 
@@ -116,9 +167,7 @@ export class ProductsService {
         return this.productsRepository.save(dbProduct)
       })
 
-      const products = (await Promise.all(productsPromises)).map(({ id, name, description, slug, price, stock, imgUrl, categoryId }) => ({
-        id, name, description, slug, price, stock, imgUrl, categoryId
-      }))
+      const products = await Promise.all(productsPromises)
 
       return { products, success: true }
     } catch {
