@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid"
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CategoryEntity } from "../categories/category.entity";
+import { ReviewEntity } from "../reviews/review.entitity";
 
 @Entity({ name: "Product" })
 export class ProductEntity {
@@ -31,4 +32,7 @@ export class ProductEntity {
 
   @Column({ nullable: true })
   categoryId: string;
+
+  @OneToMany(() => ReviewEntity, (review) => review.product)
+  reviews: ReviewEntity[]
 }
