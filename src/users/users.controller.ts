@@ -53,7 +53,7 @@ export class UsersController {
   async getUser(@Param("id", new ParseUUIDPipe({ version: "4" })) id: string, @Req() request: CustomRequest) {
 
     if (request.user?.id !== id) {
-      throw new UnauthorizedException("You are not authorized to access this data.")
+      throw new UnauthorizedException("Unauthorized.")
     }
 
     const user = await this.usersService.getUser(id)
